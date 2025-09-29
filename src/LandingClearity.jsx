@@ -12,9 +12,14 @@ const COLORS = {
 // ====== Assets (put files in /public) ======
 const CLOUDS_URL = "/clouds.png";
 const LAPTOP_URL = "/laptop.png";
+// bundle-safe URLs
+const artProd   = new URL("./assets/illustrations/prod.png", import.meta.url).href;
+const artNode   = new URL("./assets/illustrations/node.png", import.meta.url).href;
+const artPeople = new URL("./assets/illustrations/people.png", import.meta.url).href;
 
 export default function LandingClearity() {
-  return (
+  console.log(artProd)
+    return (
     <div className="min-h-screen bg-white text-zinc-900">
       <Header />
       <main>
@@ -191,7 +196,7 @@ function ProblemsTabs() {
       panelTitle: "Clearity helps you focus on the most important things",
       panelText:
         "It highlights anxiety points, areas to work on, and hidden connections, turning decisions into actionable tasks and tracking real progress.",
-      art: "/illustrations/prod.png",
+      art: artProd,
       artAlt: "Floating sheets illustration",
       panelBg: "linear-gradient(90deg, #1940A5, #244FBF)",
     },
@@ -204,7 +209,7 @@ function ProblemsTabs() {
       panelTitle: "You talk, Clearity turns your thoughts into a living map.",
       panelText:
         "Scattered thoughts become organized and chaos becomes visible order, so your mind feels lighter and more in control.",
-      art: "/illustrations/node.png",
+      art: artNode,
       artAlt: "Node map with leaves",
       panelBg: "#3F6C7C",
     },
@@ -217,7 +222,7 @@ function ProblemsTabs() {
       panelTitle: "No learning curve: Clearity works the way you already do.",
       panelText:
         "You just chat naturally — no setup, no tabs, no distractions. It works for your brain, not the other way around.",
-      art: "/illustrations/people.png",
+      art: artPeople,
       artAlt: "Two people with phone illustration",
       panelBg: "#3B87B2",
     },
