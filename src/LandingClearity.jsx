@@ -196,7 +196,7 @@ function ProblemsTabs() {
       panelTitle: "Clearity helps you focus on the most important things",
       panelText:
         "It highlights anxiety points, areas to work on, and hidden connections, turning decisions into actionable tasks and tracking real progress.",
-      art: artProd,
+      art: "https://s.iimg.su/s/29/g6niiwCxeW9dtujsbz4EfHawZetzbuUletmztjsp.png",
       artAlt: "Floating sheets illustration",
       panelBg: "linear-gradient(90deg, #1940A5, #244FBF)",
     },
@@ -209,7 +209,7 @@ function ProblemsTabs() {
       panelTitle: "You talk, Clearity turns your thoughts into a living map.",
       panelText:
         "Scattered thoughts become organized and chaos becomes visible order, so your mind feels lighter and more in control.",
-      art: artNode,
+      art: "https://s.iimg.su/s/29/gpzfxKAxcEKOe3486CFdnHikXjROqr5DKj4dLCUA.png",
       artAlt: "Node map with leaves",
       panelBg: "#3F6C7C",
     },
@@ -222,7 +222,7 @@ function ProblemsTabs() {
       panelTitle: "No learning curve: Clearity works the way you already do.",
       panelText:
         "You just chat naturally — no setup, no tabs, no distractions. It works for your brain, not the other way around.",
-      art: artPeople,
+      art: "https://s.iimg.su/s/29/gJk19KVx3NMr2QzwYXOanPXWObzaehDNnmVwzvVy.png",
       artAlt: "Two people with phone illustration",
       panelBg: "#3B87B2",
     },
@@ -310,7 +310,7 @@ function ProblemsTabs() {
                       {/* top-left reddit logo */}
                       <div className="flex items-center gap-3 mb-3">
                         <img
-                          src="/public/reddit.png" /* your PNG path */
+                          src="https://s.iimg.su/s/29/gM2b2O7x2wifoZDQycnBz7it37RlnDDDHYYLndNe.png" /* your PNG path */
                           alt="reddit"
                           className="h-9 md:h-10 lg:h-12 w-auto object-contain shrink-0"
                           draggable={false}
