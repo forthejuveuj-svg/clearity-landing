@@ -191,7 +191,7 @@ function ProblemsTabs() {
       panelTitle: "Clearity helps you focus on the most important things",
       panelText:
         "It highlights anxiety points, areas to work on, and hidden connections, turning decisions into actionable tasks and tracking real progress.",
-      art: "/public/prod.png",
+      art: "/prod.png",
       artAlt: "Floating sheets illustration",
       panelBg: "linear-gradient(90deg, #1940A5, #244FBF)",
     },
@@ -204,7 +204,7 @@ function ProblemsTabs() {
       panelTitle: "You talk, Clearity turns your thoughts into a living map.",
       panelText:
         "Scattered thoughts become organized and chaos becomes visible order, so your mind feels lighter and more in control.",
-      art: "/public/node.png",
+      art: "/node.png",
       artAlt: "Node map with leaves",
       panelBg: "#3F6C7C",
     },
@@ -217,7 +217,7 @@ function ProblemsTabs() {
       panelTitle: "No learning curve: Clearity works the way you already do.",
       panelText:
         "You just chat naturally — no setup, no tabs, no distractions. It works for your brain, not the other way around.",
-      art: "/public/people.png",
+      art: "/people.png",
       artAlt: "Two people with phone illustration",
       panelBg: "#3B87B2",
     },
