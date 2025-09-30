@@ -1,7 +1,7 @@
 // Clearity Landing Page (React + Tailwind)
-// Brand gradient, fixed clouds hero, slider tabs with artwork, scroll-reveal, and "How it works" with edge-bleed laptop.
+// Global clouds background, slider tabs with artwork (bundled), scroll-reveal, and "How it works" with edge-bleed laptop.
 
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // ====== Brand ======
 const COLORS = {
@@ -9,18 +9,48 @@ const COLORS = {
   primaryB: "#244FBF",
 };
 
-// ====== Assets (put files in /public) ======
+// ====== Assets ======
+// from /public (served at site root)
 const CLOUDS_URL = "/clouds.png";
 const LAPTOP_URL = "/laptop.png";
-// bundle-safe URLs
-const artProd   = new URL("./assets/illustrations/prod.png", import.meta.url).href;
-const artNode   = new URL("./assets/illustrations/node.png", import.meta.url).href;
-const artPeople = new URL("./assets/illustrations/people.png", import.meta.url).href;
+// bundle-safe URLs (put images in src/assets/illustrations/)
+const artProd = new URL("./assets/illustrations/prod.png", import.meta.url)
+  .href;
+const artNode = new URL("./assets/illustrations/node.png", import.meta.url)
+  .href;
+const artPeople = new URL("./assets/illustrations/people.png", import.meta.url)
+  .href;
+// reddit logo — use your own hosted PNG if you prefer
+const REDDIT_LOGO =
+  "https://s.iimg.su/s/29/gM2b2O7x2wifoZDQycnBz7it37RlnDDDHYYLndNe.png";
+
+// ====== Global Clouds Background ======
+function GlobalCloudBg() {
+  return (
+    <>
+      {/* Clouds image behind the whole app */}
+      <div
+        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${CLOUDS_URL})` }}
+        aria-hidden
+      />
+      {/* Soft white overlay to match Figma */}
+      <div
+        className="fixed inset-0 -z-10 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.86) 18%, rgba(255,255,255,0.75) 40%, rgba(255,255,255,0.60) 65%, rgba(255,255,255,0.30) 100%)",
+        }}
+        aria-hidden
+      />
+    </>
+  );
+}
 
 export default function LandingClearity() {
-  console.log(artProd)
-    return (
-    <div className="min-h-screen bg-white text-zinc-900">
+  return (
+    <div className="relative min-h-screen bg-transparent text-zinc-900">
+      <GlobalCloudBg />
       <Header />
       <main>
         <Hero />
@@ -45,7 +75,7 @@ function Container({ children, className = "" }) {
 
 function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-zinc-200/60 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+    <header className="sticky top-0 z-40 border-b border-zinc-200/60 bg-white/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/70">
       <Container className="flex h-16 items-center justify-between">
         <a href="#" className="flex items-center gap-2">
           <div
@@ -68,7 +98,9 @@ function Header() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <GradientButton href="https://form.typeform.com/to/pXqr5Phq">Join the waitlist</GradientButton>
+          <GradientButton href="https://form.typeform.com/to/pXqr5Phq">
+            Join the waitlist
+          </GradientButton>
         </div>
       </Container>
     </header>
@@ -130,26 +162,11 @@ function Reveal({ children, className = "", delay = 0 }) {
 // ====== Hero ======
 function Hero() {
   return (
-    <section className="relative h-[90vh] min-h-[640px] w-full overflow-hidden">
-      {/* Clouds */}
-      <div
-        className="absolute inset-0 bg-center bg-cover bg-fixed"
-        style={{ backgroundImage: `url(${CLOUDS_URL})` }}
-        aria-hidden
-      />
-      {/* Soft white overlay */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.86) 18%, rgba(255,255,255,0.75) 40%, rgba(255,255,255,0.60) 65%, rgba(255,255,255,0.30) 100%)",
-        }}
-      />
-
+    <section className="relative h-[90vh] min-h-[640px] w-full">
       <Container className="relative z-10 flex h-full flex-col items-center justify-center gap-6 text-center">
         <Reveal delay={50}>
           <p
-            className="text-sm font-semibold"
+            className="text-lg font-semibold"
             style={{ color: COLORS.primaryB }}
           >
             By ADHD individuals for ADHD community
@@ -170,7 +187,9 @@ function Hero() {
         </Reveal>
         <Reveal delay={350}>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <GradientButton href="https://form.typeform.com/to/pXqr5Phq">Join the waitlist</GradientButton>
+            <GradientButton href="https://form.typeform.com/to/pXqr5Phq">
+              Join the waitlist
+            </GradientButton>
             <a
               href="#demo"
               className="rounded-full border border-indigo-200 bg-white px-6 py-3 text-sm font-semibold text-zinc-800 shadow-sm hover:bg-zinc-50"
@@ -186,6 +205,8 @@ function Hero() {
 
 // ====== Problems (Slider with segmented control) ======
 function ProblemsTabs() {
+  // inside ProblemsTabs()
+
   const slides = [
     {
       key: "prod",
@@ -196,7 +217,7 @@ function ProblemsTabs() {
       panelTitle: "Clearity helps you focus on the most important things",
       panelText:
         "It highlights anxiety points, areas to work on, and hidden connections, turning decisions into actionable tasks and tracking real progress.",
-      art: "https://s.iimg.su/s/29/g6niiwCxeW9dtujsbz4EfHawZetzbuUletmztjsp.png",
+      art: artProd,
       artAlt: "Floating sheets illustration",
       panelBg: "linear-gradient(90deg, #1940A5, #244FBF)",
     },
@@ -209,7 +230,7 @@ function ProblemsTabs() {
       panelTitle: "You talk, Clearity turns your thoughts into a living map.",
       panelText:
         "Scattered thoughts become organized and chaos becomes visible order, so your mind feels lighter and more in control.",
-      art: "https://s.iimg.su/s/29/gpzfxKAxcEKOe3486CFdnHikXjROqr5DKj4dLCUA.png",
+      art: artNode,
       artAlt: "Node map with leaves",
       panelBg: "#3F6C7C",
     },
@@ -222,14 +243,23 @@ function ProblemsTabs() {
       panelTitle: "No learning curve: Clearity works the way you already do.",
       panelText:
         "You just chat naturally — no setup, no tabs, no distractions. It works for your brain, not the other way around.",
-      art: "https://s.iimg.su/s/29/gJk19KVx3NMr2QzwYXOanPXWObzaehDNnmVwzvVy.png",
+      art: artPeople,
       artAlt: "Two people with phone illustration",
       panelBg: "#3B87B2",
     },
   ];
 
   const [index, setIndex] = useState(0);
+
   const go = (i) => setIndex(Math.max(0, Math.min(slides.length - 1, i)));
+  const currentBg = slides[index]?.panelBg;
+  const activeStyle = currentBg?.startsWith("linear-gradient")
+    ? { background: currentBg }
+    : currentBg
+    ? { backgroundColor: currentBg }
+    : {
+        background: `linear-gradient(90deg, ${COLORS.primaryA}, ${COLORS.primaryB})`,
+      };
 
   // keyboard arrows
   useEffect(() => {
@@ -242,10 +272,7 @@ function ProblemsTabs() {
   }, [index]);
 
   return (
-    <section
-      id="about"
-      className="relative -mt-12 bg-gradient-to-b from-white via-sky-50 to-white pb-12 pt-10 sm:pt-14"
-    >
+    <section id="about" className="relative -mt-12 pb-12 pt-10 sm:pt-14">
       <Container>
         <Reveal>
           <h2 className="text-center font-extrabold tracking-tight text-zinc-900 text-4xl sm:text-6xl">
@@ -266,28 +293,26 @@ function ProblemsTabs() {
         >
           <div className="rounded-full border border-[#244FBF33] p-1 shadow-sm backdrop-blur bg-white/60">
             <div className="grid grid-cols-3 gap-1">
-              {slides.map((s, i) => (
-                <button
-                  key={s.key}
-                  role="tab"
-                  aria-selected={index === i}
-                  onClick={() => go(i)}
-                  className={`rounded-full px-6 py-3 text-sm font-semibold transition ${
-                    index === i
-                      ? "text-white"
-                      : "text-[#244FBF] hover:bg-[#F3F6FF]"
-                  }`}
-                  style={
-                    index === i
-                      ? {
-                          background: `linear-gradient(90deg, ${COLORS.primaryA}, ${COLORS.primaryB})`,
-                        }
-                      : {}
-                  }
-                >
-                  {s.label}
-                </button>
-              ))}
+              {slides.map((s, i) => {
+                const isActive = index === i;
+                return (
+                  <button
+                    key={s.key}
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => go(i)}
+                    className={`rounded-full px-6 py-3 text-sm font-semibold transition
+                        ${
+                          isActive
+                            ? "text-white"
+                            : "text-[#244FBF] hover:bg-[#F3F6FF]"
+                        }`}
+                    style={isActive ? activeStyle : undefined}
+                  >
+                    {s.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -300,72 +325,77 @@ function ProblemsTabs() {
           >
             {slides.map((b, i) => (
               <div key={b.key} className="w-full shrink-0 px-0">
-                <div className="grid items-stretch gap-6 md:grid-cols-[1fr_1.15fr]">
-                  {/* Left quote + reddit */}
+                {/* CHANGED: add items-stretch/content-stretch */}
+                <div className="grid items-stretch content-stretch gap-6 md:grid-cols-[1fr_1.15fr]">
+                  {/* Left: quote + reddit (unchanged) */}
                   <div className="space-y-5">
                     <Card className="rounded-[28px] bg-white/80 p-6 shadow-[0_1px_0_rgba(0,0,0,.04)] ring-1 ring-zinc-200/60">
                       <p className="text-zinc-800">“{b.quote}”</p>
                     </Card>
+
                     <Card className="rounded-[28px] bg-[#EAF2F9] p-6 md:p-7 border-2 border-[#244FBF] shadow-[0_6px_18px_rgba(36,79,191,0.12)]">
-                      {/* top-left reddit logo */}
                       <div className="flex items-center gap-3 mb-3">
                         <img
-                          src="https://s.iimg.su/s/29/gM2b2O7x2wifoZDQycnBz7it37RlnDDDHYYLndNe.png" /* your PNG path */
+                          src={REDDIT_LOGO}
                           alt="reddit"
                           className="h-9 md:h-10 lg:h-12 w-auto object-contain shrink-0"
                           draggable={false}
                         />
                       </div>
-
-                      {/* headline */}
                       <div className="text-zinc-900 text-xl md:text-[22px] leading-7 md:leading-8 font-medium [text-decoration:none]">
                         {b.rank}
                       </div>
                     </Card>
                   </div>
-                  {/* Right panel: text at left, art at right */}
-                  <Reveal delay={i * 40 + 120}>
-                    <div
-                      className="rounded-[28px] p-8 text-white shadow-md"
-                      style={{
-                        background: b.panelBg?.startsWith("linear-gradient")
-                          ? b.panelBg
-                          : undefined,
-                        backgroundColor:
-                          b.panelBg && !b.panelBg.startsWith("linear-gradient")
+
+                  {/* RIGHT: blue panel (CHANGED) */}
+                  <div className="h-full">
+                    <Reveal delay={i * 40 + 120} className="h-full">
+                      <div
+                        className="h-full rounded-[28px] p-8 md:p-10 lg:p-12 text-white shadow-md
+                           min-h-[285px] md:min-h-[305px]"
+                        style={{
+                          background: b.panelBg?.startsWith("linear-gradient")
                             ? b.panelBg
                             : undefined,
-                      }}
-                    >
-                      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[1fr_auto]">
-                        {/* TEXT — always on top/left */}
-                        <div className="relative z-10">
-                          <h3 className="text-2xl font-semibold leading-tight md:max-w-[28ch]">
-                            {b.panelTitle}
-                          </h3>
-                          <p className="mt-4 leading-relaxed opacity-95 md:max-w-[52ch]">
-                            {b.panelText}
-                          </p>
-                        </div>
+                          backgroundColor:
+                            b.panelBg &&
+                            !b.panelBg.startsWith("linear-gradient")
+                              ? b.panelBg
+                              : undefined,
+                        }}
+                      >
+                        {/* Make inner grid fill height too */}
+                        <div className="grid h-full grid-cols-1 items-start gap-6 md:grid-cols-[1fr_auto]">
+                          {/* TEXT */}
+                          <div className="relative z-10 self-start">
+                            <h3 className="text-2xl font-semibold leading-tight md:max-w-[28ch]">
+                              {b.panelTitle}
+                            </h3>
+                            <p className="mt-4 leading-relaxed opacity-95 md:max-w-[52ch]">
+                              {b.panelText}
+                            </p>
+                          </div>
 
-                        {/* ART — true right column, never under text */}
-                        {b.art && (
-                          <img
-                            src={b.art}
-                            alt={b.artAlt || ""}
-                            className="hidden h-36 w-auto justify-self-end md:block lg:h-44"
-                            draggable={false}
-                          />
-                        )}
+                          {/* ART */}
+                          {b.art && (
+                            <img
+                              src={b.art}
+                              alt={b.artAlt || ""}
+                              className="h-28 w-auto justify-self-start md:justify-self-end md:h-36 lg:h-44"
+                              draggable={false}
+                            />
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </Reveal>
+                    </Reveal>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Prev / Next */}
+          {/* Prev / Next (unchanged) */}
           <div className="mt-4 flex items-center justify-center gap-3">
             <button
               onClick={() => go(index - 1)}
@@ -429,7 +459,7 @@ function HowItWorks() {
   ];
 
   return (
-    <section className="relative mt-8 bg-gradient-to-b from-white via-sky-50 to-white py-16 sm:py-24">
+    <section className="relative mt-8 py-16 sm:py-24">
       <Container>
         <Reveal>
           <h2 className="mb-10 text-center text-3xl font-extrabold tracking-tight text-zinc-800 sm:text-5xl">
@@ -437,7 +467,7 @@ function HowItWorks() {
           </h2>
         </Reveal>
 
-        <div className="space-y-12">
+        <div className="space-y-20">
           {steps.map((s, i) => (
             <Step key={s.n} {...s} delay={i * 80} />
           ))}
@@ -475,15 +505,27 @@ function Step({ n, title, text, result, align, delay = 0 }) {
       </div>
     </Reveal>
   );
-
   const RightImage = (
     <Reveal delay={delay + 120}>
-      <div className="relative aspect-[16/9] w-full overflow-visible">
-        {/* Push image beyond container for edge bleed */}
+      {/* wrapper: allow bleed outside container */}
+      <div
+        className={[
+          "relative overflow-visible",
+          // move toward the outer edge to cancel Container padding (px-8) + a bit more
+          align === "left"
+            ? "mr-[-12vw] md:mr-[-16vw] lg:mr-[-20vw]"
+            : "ml-[-12vw] md:ml-[-16vw] lg:ml-[-20vw]",
+          // give it some fixed height so the bleed feels strong
+          "h-[280px] sm:h-[340px] md:h-[420px] lg:h-[480px]",
+        ].join(" ")}
+      >
         <img
           src={LAPTOP_URL}
           alt="Laptop"
-          className="absolute right-0 top-1/2 h-auto w-[120%] -translate-y-1/2 drop-shadow-xl md:w-[115%] lg:w-[110%]"
+          draggable={false}
+          className="absolute top-1/2 -translate-y-1/2 select-none drop-shadow-xl
+             h-[160%] md:h-[100%] lg:h-[150%] w-auto pointer-events-none"
+          style={align === "left" ? { right: "-7%" } : { left: "-7%" }}
         />
       </div>
     </Reveal>
@@ -505,7 +547,6 @@ function Step({ n, title, text, result, align, delay = 0 }) {
     </div>
   );
 }
-
 // ====== FAQ ======
 function FAQ() {
   const items = [
@@ -536,10 +577,7 @@ function FAQ() {
   ];
 
   return (
-    <section
-      id="faq"
-      className="bg-gradient-to-b from-white via-sky-50 to-white py-16 sm:py-24"
-    >
+    <section id="faq" className="py-16 sm:py-24">
       <Container>
         <Reveal>
           <h2
@@ -587,7 +625,10 @@ function Footer() {
           <a className="hover:text-zinc-900" href="#">
             Terms
           </a>
-          <GradientButton href="#waitlist" className="text-white">
+          <GradientButton
+            href="https://form.typeform.com/to/pXqr5Phq"
+            className="text-white"
+          >
             Join the waitlist
           </GradientButton>
         </div>
@@ -599,56 +640,6 @@ function Footer() {
 /* ------------------ Small UI helpers ------------------ */
 function Card({ className = "", children }) {
   return <div className={className}>{children}</div>;
-}
-
-function RedditLogo({ className = "" }) {
-  return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      {/* Alien icon */}
-      <svg viewBox="0 0 24 24" className="h-6 w-6 text-[#FF4500]" aria-hidden>
-        <circle cx="12" cy="12" r="10" fill="currentColor" opacity=".15" />
-        <circle cx="9" cy="12" r="1.5" fill="currentColor" />
-        <circle cx="15" cy="12" r="1.5" fill="currentColor" />
-        <path
-          d="M8 14c1.2 1 2.6 1.5 4 1.5S14.8 15 16 14"
-          stroke="#FF4500"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-      </svg>
-      {/* Wordmark (simple, crisp) */}
-      <span className="text-[#FF4500] text-[20px] font-extrabold leading-none">
-        reddit
-      </span>
-    </div>
-  );
-}
-
-function DocGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-6 w-6 opacity-90" aria-hidden>
-      <rect
-        x="5"
-        y="4"
-        width="14"
-        height="16"
-        rx="2"
-        fill="currentColor"
-        opacity=".2"
-      />
-      <rect x="7" y="8" width="10" height="2" rx="1" fill="currentColor" />
-      <rect
-        x="7"
-        y="12"
-        width="8"
-        height="2"
-        rx="1"
-        fill="currentColor"
-        opacity=".8"
-      />
-    </svg>
-  );
 }
 
 function Disclosure({ label, children }) {
