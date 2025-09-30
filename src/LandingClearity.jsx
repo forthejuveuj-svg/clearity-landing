@@ -1,7 +1,7 @@
 // Clearity Landing Page (React + Tailwind)
 // Global clouds background, slider tabs with artwork (bundled), scroll-reveal, and "How it works" with edge-bleed laptop.
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 
 // ====== Brand ======
 const COLORS = {
@@ -20,9 +20,89 @@ const artNode = new URL("./assets/illustrations/node.png", import.meta.url)
   .href;
 const artPeople = new URL("./assets/illustrations/people.png", import.meta.url)
   .href;
+// bundle-safe laptop images (put files in src/assets/laptops/)
+const lap1 = new URL("./assets/laptops/qwerty11.png", import.meta.url).href;
+const lap2 = new URL("./assets/laptops/qwerty21.png", import.meta.url).href;
+const lap3 = new URL("./assets/laptops/qwerty31.png", import.meta.url).href;
+const lap4 = new URL("./assets/laptops/qwerty41.png", import.meta.url).href;
+const lap5 = new URL("./assets/laptops/qwerty51.png", import.meta.url).href;
+const steps = [
+  {
+    n: 1,
+    title: "Talk it out",
+    text: "Share your messy thoughts – Clearity instantly turns it into a living mind map.",
+    result: "Brain fog turns into visible order.",
+    align: "left",
+    img: lap1,
+    imgAlt: "Laptop with voice input",
+  },
+  {
+    n: 2,
+    title: "Keep chatting",
+    text: "And switching between ideas – the map updates in real time, showing hidden connections and guiding you.",
+    result: "You finally see the bigger picture.",
+    align: "right",
+    img: lap2,
+    imgAlt: "Laptop with live map",
+  },
+  {
+    n: 3,
+    title: "Lock in clarity",
+    text: "When you land on a decision or insight, Clearity saves it as a snapshot and fades the mess.",
+    result: "No overthinking – you know what you decided.",
+    align: "left",
+    img: lap3,
+    imgAlt: "Laptop snapshot view",
+  },
+  {
+    n: 4,
+    title: "Move forward",
+    text: "Turn snapshots into tasks, track progress, and sync with your calendar.",
+    result: "Now you know exactly what you need to do.",
+    align: "right",
+    img: lap4,
+    imgAlt: "Laptop with tasks",
+  },
+  {
+    n: 5,
+    title: "Pick up anytime",
+    text: "Search snapshots with a phrase and jump back into the exact map you left off.",
+    result: "No lost context — momentum is never broken.",
+    align: "left",
+    img: lap5,
+    imgAlt: "Laptop search",
+  },
+];
+
 // reddit logo — use your own hosted PNG if you prefer
 const REDDIT_LOGO =
   "https://s.iimg.su/s/29/gM2b2O7x2wifoZDQycnBz7it37RlnDDDHYYLndNe.png";
+
+// ====== match left column height hook ======
+function useMatchHeight() {
+  const leftRef = useRef(null);
+  const [minH, setMinH] = useState(0);
+
+  useLayoutEffect(() => {
+    if (!leftRef.current) return;
+    const el = leftRef.current;
+
+    const update = () => setMinH(el.offsetHeight || 0);
+    update();
+
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+
+    // also listen to window resize (fonts/layout)
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  return { leftRef, minH };
+}
 
 // ====== Global Clouds Background ======
 function GlobalCloudBg() {
@@ -78,13 +158,20 @@ function Header() {
     <header className="sticky top-0 z-40 border-b border-zinc-200/60 bg-white/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/70">
       <Container className="flex h-16 items-center justify-between">
         <a href="#" className="flex items-center gap-2">
-          <div
+          {/* <div
             className="h-8 w-8 rounded-xl"
             style={{
               background: `linear-gradient(90deg, ${COLORS.primaryA}, ${COLORS.primaryB})`,
             }}
             aria-hidden
+          /> */}
+          <img
+            src="/logo.png" // or "/logo.png"
+            alt="Clearity"
+            className="h-8 w-auto" // tweak size here
+            draggable={false}
           />
+
           <span className="text-base font-bold tracking-tight">Clearity</span>
         </a>
 
@@ -166,7 +253,7 @@ function Hero() {
       <Container className="relative z-10 flex h-full flex-col items-center justify-center gap-6 text-center">
         <Reveal delay={50}>
           <p
-            className="text-lg font-semibold"
+            className="text-base sm:text-lg md:text-xl font-semibold"
             style={{ color: COLORS.primaryB }}
           >
             By ADHD individuals for ADHD community
@@ -174,25 +261,28 @@ function Hero() {
         </Reveal>
         <Reveal delay={150}>
           <h1
-            className="max-w-[900px] text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl"
+            className="max-w-[1100px] text-5xl sm:text-7xl lg:text-8xl font-extrabold leading-[1.05] tracking-tight"
             style={{ color: COLORS.primaryB }}
           >
             Find your Clearity
           </h1>
         </Reveal>
         <Reveal delay={250}>
-          <p className="max-w-[720px] text-lg text-zinc-700">
+          <p className="max-w-[820px] text-lg sm:text-xl md:text-2xl text-zinc-700">
             Organize your mind → Take actions → See results
           </p>
         </Reveal>
         <Reveal delay={350}>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <GradientButton href="https://form.typeform.com/to/pXqr5Phq">
+            <GradientButton
+              className="px-6 py-3 text-base"
+              href="https://form.typeform.com/to/pXqr5Phq"
+            >
               Join the waitlist
             </GradientButton>
             <a
               href="#demo"
-              className="rounded-full border border-indigo-200 bg-white px-6 py-3 text-sm font-semibold text-zinc-800 shadow-sm hover:bg-zinc-50"
+              className="rounded-full border border-indigo-200 bg-white px-7 py-3.5 text-base font-semibold text-zinc-800 shadow-sm hover:bg-zinc-50"
             >
               Watch the Demo
             </a>
@@ -205,8 +295,6 @@ function Hero() {
 
 // ====== Problems (Slider with segmented control) ======
 function ProblemsTabs() {
-  // inside ProblemsTabs()
-
   const slides = [
     {
       key: "prod",
@@ -216,7 +304,7 @@ function ProblemsTabs() {
       rank: "#1 Most Common problem for ADHD Reddit Users",
       panelTitle: "Clearity helps you focus on the most important things",
       panelText:
-        "It highlights anxiety points, areas to work on, and hidden connections, turning decisions into actionable tasks and tracking real progress.",
+        "It shows what’s important, breaks it into doable steps, and tracks your progress—so you stop spinning in circles and finally move forward.",
       art: artProd,
       artAlt: "Floating sheets illustration",
       panelBg: "linear-gradient(90deg, #1940A5, #244FBF)",
@@ -250,8 +338,9 @@ function ProblemsTabs() {
   ];
 
   const [index, setIndex] = useState(0);
-
   const go = (i) => setIndex(Math.max(0, Math.min(slides.length - 1, i)));
+
+  // Active tab color matches the panel color
   const currentBg = slides[index]?.panelBg;
   const activeStyle = currentBg?.startsWith("linear-gradient")
     ? { background: currentBg }
@@ -260,6 +349,9 @@ function ProblemsTabs() {
     : {
         background: `linear-gradient(90deg, ${COLORS.primaryA}, ${COLORS.primaryB})`,
       };
+
+  // ONE height matcher for the visible slide
+  const { leftRef, minH } = useMatchHeight();
 
   // keyboard arrows
   useEffect(() => {
@@ -275,7 +367,7 @@ function ProblemsTabs() {
     <section id="about" className="relative -mt-12 pb-12 pt-10 sm:pt-14">
       <Container>
         <Reveal>
-          <h2 className="text-center font-extrabold tracking-tight text-zinc-900 text-4xl sm:text-6xl">
+          <h2 className="text-center text-4xl sm:text-6xl font-extrabold tracking-tight text-zinc-900">
             ADHD Mental <br className="hidden sm:block" /> Struggles are Real
           </h2>
         </Reveal>
@@ -301,12 +393,11 @@ function ProblemsTabs() {
                     role="tab"
                     aria-selected={isActive}
                     onClick={() => go(i)}
-                    className={`rounded-full px-6 py-3 text-sm font-semibold transition
-                        ${
-                          isActive
-                            ? "text-white"
-                            : "text-[#244FBF] hover:bg-[#F3F6FF]"
-                        }`}
+                    className={`rounded-full px-6 py-3 text-sm font-semibold transition ${
+                      isActive
+                        ? "text-white"
+                        : "text-[#244FBF] hover:bg-[#F3F6FF]"
+                    }`}
                     style={isActive ? activeStyle : undefined}
                   >
                     {s.label}
@@ -325,35 +416,34 @@ function ProblemsTabs() {
           >
             {slides.map((b, i) => (
               <div key={b.key} className="w-full shrink-0 px-0">
-                {/* CHANGED: add items-stretch/content-stretch */}
+                {/* equal-height row */}
                 <div className="grid items-stretch content-stretch gap-6 md:grid-cols-[1fr_1.15fr]">
-                  {/* Left: quote + reddit (unchanged) */}
-                  <div className="space-y-5">
+                  {/* LEFT: quote + reddit */}
+                  <div className="flex h-full flex-col gap-5">
                     <Card className="rounded-[28px] bg-white/80 p-6 shadow-[0_1px_0_rgba(0,0,0,.04)] ring-1 ring-zinc-200/60">
                       <p className="text-zinc-800">“{b.quote}”</p>
                     </Card>
 
                     <Card className="rounded-[28px] bg-[#EAF2F9] p-6 md:p-7 border-2 border-[#244FBF] shadow-[0_6px_18px_rgba(36,79,191,0.12)]">
-                      <div className="flex items-center gap-3 mb-3">
+                      <div className="mb-3 flex items-center gap-3">
                         <img
                           src={REDDIT_LOGO}
                           alt="reddit"
-                          className="h-9 md:h-10 lg:h-12 w-auto object-contain shrink-0"
+                          className="h-9 w-auto shrink-0 object-contain md:h-10 lg:h-12"
                           draggable={false}
                         />
                       </div>
-                      <div className="text-zinc-900 text-xl md:text-[22px] leading-7 md:leading-8 font-medium [text-decoration:none]">
+                      <div className="text-zinc-900 text-xl md:text-[22px] leading-7 md:leading-8 font-medium">
                         {b.rank}
                       </div>
                     </Card>
                   </div>
 
-                  {/* RIGHT: blue panel (CHANGED) */}
+                  {/* RIGHT: blue panel */}
                   <div className="h-full">
                     <Reveal delay={i * 40 + 120} className="h-full">
                       <div
-                        className="h-full rounded-[28px] p-8 md:p-10 lg:p-12 text-white shadow-md
-                           min-h-[285px] md:min-h-[305px]"
+                        className="flex h-full rounded-[28px] p-8 text-white shadow-md md:p-10 lg:p-12"
                         style={{
                           background: b.panelBg?.startsWith("linear-gradient")
                             ? b.panelBg
@@ -365,24 +455,22 @@ function ProblemsTabs() {
                               : undefined,
                         }}
                       >
-                        {/* Make inner grid fill height too */}
-                        <div className="grid h-full grid-cols-1 items-start gap-6 md:grid-cols-[1fr_auto]">
+                        <div className="grid h-full w-full grid-cols-[1fr_minmax(170px,175px)] items-center gap-6">
                           {/* TEXT */}
                           <div className="relative z-10 self-start">
-                            <h3 className="text-2xl font-semibold leading-tight md:max-w-[28ch]">
+                            <h3 className="text-2xl md:text-3xl font-semibold leading-tight md:max-w-[28ch]">
                               {b.panelTitle}
                             </h3>
                             <p className="mt-4 leading-relaxed opacity-95 md:max-w-[52ch]">
                               {b.panelText}
                             </p>
                           </div>
-
-                          {/* ART */}
+                          {/* ART pinned right */}
                           {b.art && (
                             <img
                               src={b.art}
                               alt={b.artAlt || ""}
-                              className="h-28 w-auto justify-self-start md:justify-self-end md:h-36 lg:h-44"
+                              className="justify-self-end self-end h-[140px] w-[200px] md:h-[180px] lg:h-[220px]"
                               draggable={false}
                             />
                           )}
@@ -395,7 +483,7 @@ function ProblemsTabs() {
             ))}
           </div>
 
-          {/* Prev / Next (unchanged) */}
+          {/* Prev / Next */}
           <div className="mt-4 flex items-center justify-center gap-3">
             <button
               onClick={() => go(index - 1)}
@@ -420,54 +508,16 @@ function ProblemsTabs() {
 
 // ====== How It Works ======
 function HowItWorks() {
-  const steps = [
-    {
-      n: 1,
-      title: "Talk it out",
-      text: "Share your messy thoughts – Clearity instantly turns it into a living mind map.",
-      result: "Brain fog turns into visible order.",
-      align: "left",
-    },
-    {
-      n: 2,
-      title: "Keep chatting",
-      text: "And switching between ideas – the map updates in real time, showing hidden connections and guiding you.",
-      result: "You finally see the bigger picture.",
-      align: "right",
-    },
-    {
-      n: 3,
-      title: "Lock in clarity",
-      text: "When you land on a decision or insight, Clearity saves it as a snapshot and fades the clutter.",
-      result: "No overthinking – you know what you decided.",
-      align: "left",
-    },
-    {
-      n: 4,
-      title: "Move forward",
-      text: "Turn snapshots into tasks, track progress, and sync with your calendar.",
-      result: "Now you know exactly what you need to do.",
-      align: "right",
-    },
-    {
-      n: 5,
-      title: "Pick up anytime",
-      text: "Search snapshots with a phrase and jump back into the exact map you left off.",
-      result: "No lost context — momentum is never broken.",
-      align: "left",
-    },
-  ];
-
   return (
     <section className="relative mt-8 py-16 sm:py-24">
       <Container>
         <Reveal>
-          <h2 className="mb-10 text-center text-3xl font-extrabold tracking-tight text-zinc-800 sm:text-5xl">
+          <h2 className="mb-16 sm:mb-20 text-center text-3xl font-extrabold tracking-tight text-zinc-800 sm:text-5xl">
             How Clearity Works
           </h2>
         </Reveal>
 
-        <div className="space-y-20">
+        <div className="mt-12 sm:mt-16 space-y-12">
           {steps.map((s, i) => (
             <Step key={s.n} {...s} delay={i * 80} />
           ))}
@@ -477,14 +527,14 @@ function HowItWorks() {
   );
 }
 
-function Step({ n, title, text, result, align, delay = 0 }) {
+function Step({ n, title, text, result, align, img, imgAlt, delay = 0 }) {
   const LeftText = (
     <Reveal delay={delay}>
       <div className="p-2 sm:p-4">
         <div className="flex items-start gap-6">
           {/* Step number */}
           <div
-            className="select-none text-5xl sm:text-6xl font-extrabold leading-none text-zinc-900"
+            className="select-none text-6xl sm:text-8xl font-extrabold leading-none text-zinc-900"
             aria-hidden
           >
             {n}
@@ -495,7 +545,7 @@ function Step({ n, title, text, result, align, delay = 0 }) {
               className="absolute left-0 top-1 h-[90%] w-px bg-zinc-300"
               aria-hidden
             />
-            <h3 className="text-2xl sm:text-3xl font-semibold text-zinc-900">
+            <h3 className="text-6xl sm:text-5xl font-semibold text-zinc-900">
               {title}
             </h3>
             <p className="mt-2 text-zinc-700 max-w-prose">{text}</p>
@@ -505,26 +555,24 @@ function Step({ n, title, text, result, align, delay = 0 }) {
       </div>
     </Reveal>
   );
+
   const RightImage = (
     <Reveal delay={delay + 120}>
-      {/* wrapper: allow bleed outside container */}
       <div
         className={[
           "relative overflow-visible",
-          // move toward the outer edge to cancel Container padding (px-8) + a bit more
           align === "left"
             ? "mr-[-12vw] md:mr-[-16vw] lg:mr-[-20vw]"
             : "ml-[-12vw] md:ml-[-16vw] lg:ml-[-20vw]",
-          // give it some fixed height so the bleed feels strong
           "h-[280px] sm:h-[340px] md:h-[420px] lg:h-[480px]",
         ].join(" ")}
       >
         <img
-          src={LAPTOP_URL}
-          alt="Laptop"
+          src={img || LAPTOP_URL} // <- per-step image, falls back to global
+          alt={imgAlt || "Laptop"}
           draggable={false}
           className="absolute top-1/2 -translate-y-1/2 select-none drop-shadow-xl
-             h-[160%] md:h-[100%] lg:h-[150%] w-auto pointer-events-none"
+                   h-[160%] md:h-[100%] lg:h-[150%] w-auto pointer-events-none"
           style={align === "left" ? { right: "-7%" } : { left: "-7%" }}
         />
       </div>
@@ -547,6 +595,7 @@ function Step({ n, title, text, result, align, delay = 0 }) {
     </div>
   );
 }
+
 // ====== FAQ ======
 function FAQ() {
   const items = [
