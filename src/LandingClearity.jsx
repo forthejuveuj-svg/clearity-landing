@@ -21,11 +21,11 @@ const artNode = new URL("./assets/illustrations/node.png", import.meta.url)
 const artPeople = new URL("./assets/illustrations/people.png", import.meta.url)
   .href;
 // bundle-safe laptop images (put files in src/assets/laptops/)
-const lap1 = new URL("./assets/laptops/qwerty11.png", import.meta.url).href;
-const lap2 = new URL("./assets/laptops/qwerty21.png", import.meta.url).href;
-const lap3 = new URL("./assets/laptops/qwerty31.png", import.meta.url).href;
-const lap4 = new URL("./assets/laptops/qwerty41.png", import.meta.url).href;
-const lap5 = new URL("./assets/laptops/qwerty51.png", import.meta.url).href;
+const lap1 = new URL("./assets/laptops/1.png", import.meta.url).href;
+const lap2 = new URL("./assets/laptops/2.png", import.meta.url).href;
+const lap3 = new URL("./assets/laptops/3.png", import.meta.url).href;
+const lap4 = new URL("./assets/laptops/4.png", import.meta.url).href;
+const lap5 = new URL("./assets/laptops/5.png", import.meta.url).href;
 const steps = [
   {
     n: 1,
@@ -280,12 +280,7 @@ function Hero() {
             >
               Join the waitlist
             </GradientButton>
-            <a
-              href="#demo"
-              className="rounded-full border border-indigo-200 bg-white px-7 py-3.5 text-base font-semibold text-zinc-800 shadow-sm hover:bg-zinc-50"
-            >
-              Watch the Demo
-            </a>
+            
           </div>
         </Reveal>
       </Container>
