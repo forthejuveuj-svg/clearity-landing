@@ -127,17 +127,18 @@ function GlobalCloudBg() {
   );
 }
 
-export default function LandingClearity() {
+export default function LandingClearity({ onDemo }) {
   return (
     <div className="relative min-h-screen bg-transparent text-zinc-900">
       <GlobalCloudBg />
-      <Header />
+      <Header onDemo={onDemo} />
       <main>
-        <Hero />
+        <Hero onDemo={onDemo} />
         <ProblemsTabs />
         <HowItWorks />
         <FAQ />
       </main>
+      <CallToActionFooter />
       <Footer />
     </div>
   );
@@ -153,7 +154,42 @@ function Container({ children, className = "" }) {
   );
 }
 
-function Header() {
+function Header({ onDemo }) {
+  const [activeSection, setActiveSection] = useState('home');
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const aboutSection = document.getElementById('about');
+      const faqSection = document.getElementById('faq');
+      
+      if (aboutSection && faqSection) {
+        const aboutRect = aboutSection.getBoundingClientRect();
+        const faqRect = faqSection.getBoundingClientRect();
+        
+        // Check if FAQ section is in view (more precise detection)
+        if (faqRect.top <= 200 && faqRect.bottom >= 200) {
+          setActiveSection('faq');
+        } 
+        // Check if About section is in view (but not if FAQ is also in view)
+        else if (aboutRect.top <= 200 && aboutRect.bottom >= 200) {
+          setActiveSection('about');
+        } 
+        // If neither section is properly in view, check which is closer
+        else if (Math.abs(faqRect.top) < Math.abs(aboutRect.top)) {
+          setActiveSection('faq');
+        } else if (aboutRect.top < 300) {
+          setActiveSection('about');
+        } else {
+          setActiveSection('home');
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial position
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   return (
     <header className="sticky top-0 z-40 border-b border-zinc-200/60 bg-white/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/70">
       <Container className="flex h-16 items-center justify-between">
@@ -175,19 +211,39 @@ function Header() {
           <span className="text-base font-bold tracking-tight">Clearity</span>
         </a>
 
-        <nav className="hidden items-center gap-8 text-sm text-zinc-700 md:flex">
-          <a className="hover:text-zinc-900" href="#about">
-            About
-          </a>
-          <a className="hover:text-zinc-900" href="#faq">
-            FAQ
-          </a>
-        </nav>
+        <div className="flex items-center gap-8">
+          <nav className="hidden items-center gap-8 text-sm text-zinc-700 md:flex">
+            <a 
+              className={`hover:text-zinc-900 transition ${activeSection === 'home' ? 'border-b-2 border-[#1940A5] pb-1' : ''}`} 
+              href="#"
+            >
+              Home
+            </a>
+            <a 
+              className={`hover:text-zinc-900 transition ${activeSection === 'about' ? 'border-b-2 border-[#1940A5] pb-1' : ''}`} 
+              href="#about"
+            >
+              About
+            </a>
+            <a 
+              className={`hover:text-zinc-900 transition ${activeSection === 'faq' ? 'border-b-2 border-[#1940A5] pb-1' : ''}`} 
+              href="#faq"
+            >
+              FAQ
+            </a>
+            <button
+              onClick={onDemo}
+              className="hover:text-zinc-900 transition"
+            >
+              Demo
+            </button>
+          </nav>
 
-        <div className="hidden items-center gap-3 md:flex">
+          <div className="hidden items-center gap-3 md:flex">
           <GradientButton href="https://form.typeform.com/to/pXqr5Phq">
             Join the waitlist
           </GradientButton>
+          </div>
         </div>
       </Container>
     </header>
@@ -247,10 +303,10 @@ function Reveal({ children, className = "", delay = 0 }) {
 }
 
 // ====== Hero ======
-function Hero() {
+function Hero({ onDemo }) {
   return (
     <section className="relative h-[90vh] min-h-[640px] w-full">
-      <Container className="relative z-10 flex h-full flex-col items-center justify-center gap-6 text-center">
+      <div className="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8 relative z-10 flex h-full flex-col items-center justify-center gap-6 text-center">
         <Reveal delay={50}>
           <p
             className="text-base sm:text-lg md:text-xl font-semibold"
@@ -269,21 +325,26 @@ function Hero() {
         </Reveal>
         <Reveal delay={250}>
           <p className="max-w-[820px] text-lg sm:text-xl md:text-2xl text-zinc-700">
-            Organize your mind → Take actions → See results
+            Organize your mind → Reduce stress → Get things done
           </p>
         </Reveal>
         <Reveal delay={350}>
           <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={onDemo}
+              className="rounded-full px-6 py-3 text-base font-semibold text-zinc-700 border border-zinc-300 hover:bg-zinc-50 transition"
+            >
+              Demo
+            </button>
             <GradientButton
               className="px-6 py-3 text-base"
               href="https://form.typeform.com/to/pXqr5Phq"
             >
               Join the waitlist
             </GradientButton>
-            
           </div>
         </Reveal>
-      </Container>
+      </div>
     </section>
   );
 }
@@ -327,7 +388,7 @@ function ProblemsTabs() {
       panelText:
         "You just chat naturally — no setup, no tabs, no distractions. It works for your brain, not the other way around.",
       art: artPeople,
-      artAlt: "Two people with phone illustration",
+      artAlt: "Smartphone interaction illustration" ,
       panelBg: "#3B87B2",
     },
   ];
@@ -415,11 +476,11 @@ function ProblemsTabs() {
                 <div className="grid items-stretch content-stretch gap-6 md:grid-cols-[1fr_1.15fr]">
                   {/* LEFT: quote + reddit */}
                   <div className="flex h-full flex-col gap-5">
-                    <Card className="rounded-[28px] bg-white/80 p-6 shadow-[0_1px_0_rgba(0,0,0,.04)] ring-1 ring-zinc-200/60">
-                      <p className="text-zinc-800">“{b.quote}”</p>
+                    <Card className="rounded-[28px] bg-[#EAF2F9] p-6 md:p-7 shadow-[0_1px_0_rgba(0,0,0,.04)] border-2 border-[#244FBF] flex-shrink-0">
+                      <p className="text-zinc-800">"{b.quote}"</p>
                     </Card>
 
-                    <Card className="rounded-[28px] bg-[#EAF2F9] p-6 md:p-7 border-2 border-[#244FBF] shadow-[0_6px_18px_rgba(36,79,191,0.12)]">
+                    <Card className="rounded-[28px] bg-white/80 p-6 ring-1 ring-zinc-200/60 shadow-[0_6px_18px_rgba(36,79,191,0.12)] flex-1 flex flex-col justify-center">
                       <div className="mb-3 flex items-center gap-3">
                         <img
                           src={REDDIT_LOGO}
@@ -465,7 +526,7 @@ function ProblemsTabs() {
                             <img
                               src={b.art}
                               alt={b.artAlt || ""}
-                              className="justify-self-end self-end h-[140px] w-[200px] md:h-[180px] lg:h-[220px]"
+                              className="justify-self-end self-end h-[160px] w-[240px] md:h-[200px] md:w-[280px] lg:h-[400Ypx] lg:w-[480px] object-contain ml-8"
                               draggable={false}
                             />
                           )}
@@ -479,7 +540,7 @@ function ProblemsTabs() {
           </div>
 
           {/* Prev / Next */}
-          <div className="mt-4 flex items-center justify-center gap-3">
+          <div className="mt-4 flex items-center justify-center gap-3 -ml-4">
             <button
               onClick={() => go(index - 1)}
               className="rounded-full border border-[#244FBF33] px-3 py-2 text-sm text-[#244FBF] disabled:opacity-40"
@@ -512,7 +573,7 @@ function HowItWorks() {
           </h2>
         </Reveal>
 
-        <div className="mt-12 sm:mt-16 space-y-12">
+        <div className="mt-32 sm:mt-40 space-y-48">
           {steps.map((s, i) => (
             <Step key={s.n} {...s} delay={i * 80} />
           ))}
@@ -567,7 +628,7 @@ function Step({ n, title, text, result, align, img, imgAlt, delay = 0 }) {
           alt={imgAlt || "Laptop"}
           draggable={false}
           className="absolute top-1/2 -translate-y-1/2 select-none drop-shadow-xl
-                   h-[160%] md:h-[100%] lg:h-[150%] w-auto pointer-events-none"
+                   h-[120%] md:h-[80%] lg:h-[120%] w-auto pointer-events-none"
           style={align === "left" ? { right: "-7%" } : { left: "-7%" }}
         />
       </div>
@@ -637,9 +698,9 @@ function FAQ() {
             <a
               className="font-medium"
               style={{ color: COLORS.primaryB }}
-              href="mailto:jago@clearity.me"
+              href="mailto:jago@clearity.pro"
             >
-              jago@clearity.me
+              jago@clearity.pro
             </a>
           </p>
         </Reveal>
@@ -656,26 +717,33 @@ function FAQ() {
   );
 }
 
-// ====== Footer ======
-function Footer() {
+// ====== Call to Action Footer ======
+function CallToActionFooter() {
   return (
-    <footer className="border-t border-zinc-200/60 py-10 text-sm text-zinc-600">
-      <Container className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-        <div>© {new Date().getFullYear()} Clearity</div>
-        <div className="flex items-center gap-6">
-          <a className="hover:text-zinc-900" href="#">
-            Privacy
-          </a>
-          <a className="hover:text-zinc-900" href="#">
-            Terms
-          </a>
-          <GradientButton
+    <section className="bg-black py-8">
+      <div className="mx-auto w-full max-w-lg px-4 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            Feeling overwhelmed?
+          </h2>
+          <GradientButton 
             href="https://form.typeform.com/to/pXqr5Phq"
             className="text-white"
           >
             Join the waitlist
           </GradientButton>
         </div>
+      </div>
+    </section>
+  );
+}
+
+// ====== Footer ======
+function Footer() {
+  return (
+    <footer className="border-t border-zinc-200/60 py-10 text-sm text-zinc-600">
+      <Container className="flex flex-col items-start justify-center gap-4">
+        <div className="ml-16">© {new Date().getFullYear()} Clearity</div>
       </Container>
     </footer>
   );
@@ -687,9 +755,7 @@ function Card({ className = "", children }) {
 }
 
 function Disclosure({ label, children }) {
-  const [open, setOpen] = useState(
-    label === "Is Clearity just another productivity app?"
-  );
+  const [open, setOpen] = useState(false);
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white/70 p-4 shadow-[0_1px_0_rgba(0,0,0,.04)]">
       <button
