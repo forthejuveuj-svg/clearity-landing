@@ -1,7 +1,7 @@
 // Clearity Landing Page (React + Tailwind)
 // Global clouds background, slider tabs with artwork (bundled), scroll-reveal, and "How it works" with edge-bleed laptop.
 
-import { useState, useEffect, useRef, useLayoutEffect } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 
 // ====== Brand ======
 const COLORS = {
@@ -74,9 +74,8 @@ const steps = [
   },
 ];
 
-// reddit logo — use your own hosted PNG if you prefer
-const REDDIT_LOGO =
-  "https://s.iimg.su/s/29/gM2b2O7x2wifoZDQycnBz7it37RlnDDDHYYLndNe.png";
+// reddit logo — use local file
+const REDDIT_LOGO = "/reddit.png";
 
 // ====== match left column height hook ======
 function useMatchHeight() {
@@ -127,13 +126,13 @@ function GlobalCloudBg() {
   );
 }
 
-export default function LandingClearity({ onDemo }) {
+export default function LandingClearity() {
   return (
     <div className="relative min-h-screen bg-transparent text-zinc-900">
       <GlobalCloudBg />
-      <Header onDemo={onDemo} />
+      <Header />
       <main>
-        <Hero onDemo={onDemo} />
+        <Hero />
         <ProblemsTabs />
         <HowItWorks />
         <FAQ />
@@ -154,8 +153,10 @@ function Container({ children, className = "" }) {
   );
 }
 
-function Header({ onDemo }) {
+
+function Header() {
   const [activeSection, setActiveSection] = useState('home');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -190,28 +191,21 @@ function Header({ onDemo }) {
     
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
   return (
-    <header className="sticky top-0 z-40 border-b border-zinc-200/60 bg-white/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/70">
+    <header className="fixed top-0 left-0 right-0 z-40 border-b border-zinc-200/60 bg-white/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/70">
       <Container className="flex h-16 items-center justify-between">
         <a href="#" className="flex items-center gap-2">
-          {/* <div
-            className="h-8 w-8 rounded-xl"
-            style={{
-              background: `linear-gradient(90deg, ${COLORS.primaryA}, ${COLORS.primaryB})`,
-            }}
-            aria-hidden
-          /> */}
           <img
-            src="/logo.png" // or "/logo.png"
+            src="/logo.png"
             alt="Clearity"
-            className="h-8 w-auto" // tweak size here
+            className="h-8 w-auto"
             draggable={false}
           />
-
           <span className="text-base font-bold tracking-tight">Clearity</span>
         </a>
 
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-3 md:gap-8">
           <nav className="hidden items-center gap-8 text-sm text-zinc-700 md:flex">
             <a 
               className={`hover:text-zinc-900 transition ${activeSection === 'home' ? 'border-b-2 border-[#1940A5] pb-1' : ''}`} 
@@ -231,21 +225,65 @@ function Header({ onDemo }) {
             >
               FAQ
             </a>
-            <button
-              onClick={onDemo}
-              className="hover:text-zinc-900 transition"
-            >
-              Demo
-            </button>
           </nav>
 
+          {/* Desktop Start now button */}
           <div className="hidden items-center gap-3 md:flex">
-          <GradientButton href="https://form.typeform.com/to/pXqr5Phq">
-            Join the waitlist
-          </GradientButton>
+            <GradientButton href="https://clearity.space">
+              Start now
+            </GradientButton>
           </div>
+
+          {/* Mobile Start now button */}
+          <div className="md:hidden">
+            <GradientButton href="https://clearity.space" className="px-4 py-2 text-sm">
+              Start now
+            </GradientButton>
+          </div>
+
+          {/* Mobile menu button */}
+          <button
+            className="md:hidden flex flex-col gap-1.5 p-2"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span className={`w-6 h-0.5 bg-zinc-700 transition-all ${mobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
+            <span className={`w-6 h-0.5 bg-zinc-700 transition-all ${mobileMenuOpen ? 'opacity-0' : ''}`}></span>
+            <span className={`w-6 h-0.5 bg-zinc-700 transition-all ${mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
+          </button>
         </div>
       </Container>
+
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-zinc-200/60 bg-white/95 backdrop-blur-md">
+          <Container className="py-4">
+            <nav className="flex flex-col gap-4">
+              <a 
+                className={`text-sm text-zinc-700 hover:text-zinc-900 transition py-2 ${activeSection === 'home' ? 'font-semibold' : ''}`} 
+                href="#"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Home
+              </a>
+              <a 
+                className={`text-sm text-zinc-700 hover:text-zinc-900 transition py-2 ${activeSection === 'about' ? 'font-semibold' : ''}`} 
+                href="#about"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                About
+              </a>
+              <a 
+                className={`text-sm text-zinc-700 hover:text-zinc-900 transition py-2 ${activeSection === 'faq' ? 'font-semibold' : ''}`} 
+                href="#faq"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                FAQ
+              </a>
+            </nav>
+          </Container>
+        </div>
+      )}
     </header>
   );
 }
@@ -303,44 +341,46 @@ function Reveal({ children, className = "", delay = 0 }) {
 }
 
 // ====== Hero ======
-function Hero({ onDemo }) {
+function Hero() {
   return (
-    <section className="relative h-[90vh] min-h-[640px] w-full">
+    <section className="relative h-[90vh] min-h-[640px] w-full pt-16">
       <div className="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8 relative z-10 flex h-full flex-col items-center justify-center gap-6 text-center">
         <Reveal delay={50}>
-          <p
-            className="text-base sm:text-lg md:text-xl font-semibold"
-            style={{ color: COLORS.primaryB }}
-          >
-            By ADHD individuals for ADHD community
-          </p>
+          <div className="flex flex-col items-center gap-3 -mt-40 sm:-mt-36 md:-mt-32">
+            <p
+              className="text-base sm:text-lg md:text-xl font-semibold"
+              style={{ color: COLORS.primaryB }}
+            >
+              By ADHD individuals for ADHD community
+            </p>
+            <img
+              src="/icon.png"
+              alt=""
+              className="h-12 w-12 sm:h-16 sm:w-16 object-contain"
+              draggable={false}
+            />
+          </div>
         </Reveal>
         <Reveal delay={150}>
           <h1
-            className="max-w-[1100px] text-5xl sm:text-7xl lg:text-8xl font-extrabold leading-[1.05] tracking-tight"
+            className="max-w-[1100px] text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold leading-[1.05] tracking-tight"
             style={{ color: COLORS.primaryB }}
           >
-            Find your Clearity
+            AI that makes sense<br className="md:hidden" /> of your Mind
           </h1>
         </Reveal>
         <Reveal delay={250}>
-          <p className="max-w-[820px] text-lg sm:text-xl md:text-2xl text-zinc-700">
-            Organize your mind → Reduce stress → Get things done
+          <p className="max-w-[820px] text-lg sm:text-xl md:text-2xl text-zinc-700 font-light italic -mt-3 sm:mt-0">
+            and helps you get unstuck
           </p>
         </Reveal>
         <Reveal delay={350}>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <button
-              onClick={onDemo}
-              className="rounded-full px-6 py-3 text-base font-semibold text-zinc-700 border border-zinc-300 hover:bg-zinc-50 transition"
-            >
-              Demo
-            </button>
             <GradientButton
-              className="px-6 py-3 text-base"
-              href="https://form.typeform.com/to/pXqr5Phq"
+              className="px-8 py-4 text-lg md:px-10 md:py-5 md:text-xl"
+              href="https://clearity.space"
             >
-              Join the waitlist
+              Start now
             </GradientButton>
           </div>
         </Reveal>
@@ -677,7 +717,7 @@ function FAQ() {
     },
     {
       q: "How can I try it?",
-      a: "Join the waitlist and get early access to the private beta.",
+      a: "Visit clearity.space to start using the platform now.",
     },
   ];
 
@@ -720,17 +760,17 @@ function FAQ() {
 // ====== Call to Action Footer ======
 function CallToActionFooter() {
   return (
-    <section className="bg-black py-8">
-      <div className="mx-auto w-full max-w-lg px-4 sm:px-6 lg:px-8">
+    <section className="bg-black py-24 md:py-32">
+      <div className="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+          <h2 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white mb-12 md:mb-16">
             Feeling overwhelmed?
           </h2>
           <GradientButton 
-            href="https://form.typeform.com/to/pXqr5Phq"
-            className="text-white"
+            href="https://clearity.space"
+            className="text-white px-12 py-5 text-xl md:px-16 md:py-6 md:text-2xl"
           >
-            Join the waitlist
+            Start now
           </GradientButton>
         </div>
       </div>
