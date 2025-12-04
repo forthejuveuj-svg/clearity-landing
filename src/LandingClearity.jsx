@@ -26,6 +26,12 @@ const lap2 = new URL("./assets/laptops/2.png", import.meta.url).href;
 const lap3 = new URL("./assets/laptops/3.png", import.meta.url).href;
 const lap4 = new URL("./assets/laptops/4.png", import.meta.url).href;
 const lap5 = new URL("./assets/laptops/5.png", import.meta.url).href;
+// Mobile laptop images
+const mobileLap1 = new URL("./assets/laptops/MacBook Air - 16.png", import.meta.url).href;
+const mobileLap2 = new URL("./assets/laptops/MacBook Air - 17.png", import.meta.url).href;
+const mobileLap3 = new URL("./assets/laptops/MacBook Air - 18.png", import.meta.url).href;
+const mobileLap4 = new URL("./assets/laptops/MacBook Air - 19.png", import.meta.url).href;
+const mobileLap5 = new URL("./assets/laptops/MacBook Air - 20.png", import.meta.url).href;
 const steps = [
   {
     n: 1,
@@ -34,6 +40,7 @@ const steps = [
     result: "Brain fog turns into visible order.",
     align: "left",
     img: lap1,
+    mobileImg: mobileLap1,
     imgAlt: "Laptop with voice input",
   },
   {
@@ -43,6 +50,7 @@ const steps = [
     result: "You finally see the bigger picture.",
     align: "right",
     img: lap2,
+    mobileImg: mobileLap2,
     imgAlt: "Laptop with live map",
   },
   {
@@ -52,6 +60,7 @@ const steps = [
     result: "No overthinking – you know what you decided.",
     align: "left",
     img: lap3,
+    mobileImg: mobileLap3,
     imgAlt: "Laptop snapshot view",
   },
   {
@@ -61,6 +70,7 @@ const steps = [
     result: "Now you know exactly what you need to do.",
     align: "right",
     img: lap4,
+    mobileImg: mobileLap4,
     imgAlt: "Laptop with tasks",
   },
   {
@@ -70,6 +80,7 @@ const steps = [
     result: "No lost context — momentum is never broken.",
     align: "left",
     img: lap5,
+    mobileImg: mobileLap5,
     imgAlt: "Laptop search",
   },
 ];
@@ -517,7 +528,7 @@ function ProblemsTabs() {
                   {/* LEFT: quote + reddit */}
                   <div className="flex h-full flex-col gap-5">
                     <Card className="rounded-[28px] bg-[#EAF2F9] p-6 md:p-7 shadow-[0_1px_0_rgba(0,0,0,.04)] border-2 border-[#244FBF] flex-shrink-0">
-                      <p className="text-zinc-800">"{b.quote}"</p>
+                      <p className="text-zinc-800 text-base md:text-lg leading-relaxed">"{b.quote}"</p>
                     </Card>
 
                     <Card className="rounded-[28px] bg-white/80 p-6 ring-1 ring-zinc-200/60 shadow-[0_6px_18px_rgba(36,79,191,0.12)] flex-1 flex flex-col justify-center">
@@ -529,7 +540,7 @@ function ProblemsTabs() {
                           draggable={false}
                         />
                       </div>
-                      <div className="text-zinc-900 text-xl md:text-[22px] leading-7 md:leading-8 font-medium">
+                      <div className="text-zinc-900 text-lg md:text-xl lg:text-[22px] leading-6 md:leading-7 lg:leading-8 font-medium">
                         {b.rank}
                       </div>
                     </Card>
@@ -551,13 +562,13 @@ function ProblemsTabs() {
                               : undefined,
                         }}
                       >
-                        <div className="grid h-full w-full grid-cols-[1fr_minmax(170px,175px)] items-center gap-6">
+                        <div className="grid h-full w-full grid-cols-1 md:grid-cols-[1fr_minmax(170px,175px)] items-center gap-6">
                           {/* TEXT */}
-                          <div className="relative z-10 self-start">
-                            <h3 className="text-2xl md:text-3xl font-semibold leading-tight md:max-w-[28ch]">
+                          <div className="relative z-10 self-start w-full">
+                            <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold leading-tight md:max-w-[28ch]">
                               {b.panelTitle}
                             </h3>
-                            <p className="mt-4 leading-relaxed opacity-95 md:max-w-[52ch]">
+                            <p className="mt-4 text-base md:text-lg leading-relaxed opacity-95 md:max-w-[52ch]">
                               {b.panelText}
                             </p>
                           </div>
@@ -566,7 +577,7 @@ function ProblemsTabs() {
                             <img
                               src={b.art}
                               alt={b.artAlt || ""}
-                              className="justify-self-end self-end h-[160px] w-[240px] md:h-[200px] md:w-[280px] lg:h-[400Ypx] lg:w-[480px] object-contain ml-8"
+                              className="hidden md:block justify-self-end self-end h-[160px] w-[240px] md:h-[200px] md:w-[280px] lg:h-[400Ypx] lg:w-[480px] object-contain ml-8"
                               draggable={false}
                             />
                           )}
@@ -623,7 +634,10 @@ function HowItWorks() {
   );
 }
 
-function Step({ n, title, text, result, align, img, imgAlt, delay = 0 }) {
+function Step({ n, title, text, result, align, img, mobileImg, imgAlt, delay = 0 }) {
+  // Use mobile-specific image if provided, otherwise fall back to regular image
+  const mobileImageSrc = mobileImg || img || LAPTOP_URL;
+
   const LeftText = (
     <Reveal delay={delay}>
       <div className="p-2 sm:p-4">
@@ -652,11 +666,31 @@ function Step({ n, title, text, result, align, img, imgAlt, delay = 0 }) {
     </Reveal>
   );
 
+  // Mobile image - appears after text on mobile
+  const MobileImage = (
+    <Reveal delay={delay + 80}>
+      <div className="md:hidden w-full flex justify-center my-6">
+        <img
+          src={mobileImageSrc}
+          alt={imgAlt || "Platform screenshot"}
+          draggable={false}
+          className="w-full max-w-full object-contain drop-shadow-xl"
+          style={{ 
+            opacity: 1, 
+            filter: 'brightness(1.1) contrast(1.05) saturate(1.05)',
+            imageRendering: 'crisp-edges'
+          }}
+        />
+      </div>
+    </Reveal>
+  );
+
+  // Desktop image
   const RightImage = (
     <Reveal delay={delay + 120}>
       <div
         className={[
-          "relative overflow-visible",
+          "relative overflow-visible hidden md:block",
           align === "left"
             ? "mr-[-12vw] md:mr-[-16vw] lg:mr-[-20vw]"
             : "ml-[-12vw] md:ml-[-16vw] lg:ml-[-20vw]",
@@ -664,7 +698,7 @@ function Step({ n, title, text, result, align, img, imgAlt, delay = 0 }) {
         ].join(" ")}
       >
         <img
-          src={img || LAPTOP_URL} // <- per-step image, falls back to global
+          src={img || LAPTOP_URL}
           alt={imgAlt || "Laptop"}
           draggable={false}
           className="absolute top-1/2 -translate-y-1/2 select-none drop-shadow-xl
@@ -676,18 +710,26 @@ function Step({ n, title, text, result, align, img, imgAlt, delay = 0 }) {
   );
 
   return (
-    <div className="grid items-center gap-6 sm:gap-10 md:grid-cols-2">
-      {align === "left" ? (
-        <>
-          {LeftText}
-          {RightImage}
-        </>
-      ) : (
-        <>
-          {RightImage}
-          {LeftText}
-        </>
-      )}
+    <div>
+      {/* Mobile layout: text then image */}
+      <div className="md:hidden">
+        {LeftText}
+        {MobileImage}
+      </div>
+      {/* Desktop layout: side by side based on align */}
+      <div className="hidden md:grid md:grid-cols-2 md:items-center md:gap-6 md:gap-10">
+        {align === "left" ? (
+          <>
+            {LeftText}
+            {RightImage}
+          </>
+        ) : (
+          <>
+            {RightImage}
+            {LeftText}
+          </>
+        )}
+      </div>
     </div>
   );
 }
